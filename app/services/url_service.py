@@ -9,11 +9,16 @@ def create_short_url(
         url_data:URLCreate,
         db:Session
 )->URL:
-    url=URL(
-        original_url=str(url_data.url),
-)
-    db.add(url)
-    db.flush()
-    url.short_code=encode_base62(url.id)
-    db.commit()
-    db.refresh(url)
+    try:
+        url=URL(
+            original_url=str(url_data.url),
+    )
+        db.add(url)
+        db.flush()
+        url.short_code=encode_base62(url.id)
+        db.commit()
+        db.refresh(url)
+        return url
+    except Exception:
+        db.rollback()
+        raise
