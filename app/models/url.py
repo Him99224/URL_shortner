@@ -21,7 +21,7 @@ class URL(Base):
     short_code:Mapped[str]=mapped_column(
         String(10),
         unique=True,
-        nullable=False
+        nullable=True
     )
 
     created_at:Mapped[datetime]=mapped_column(
