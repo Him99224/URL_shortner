@@ -1,6 +1,6 @@
 from collections.abc import Generator
 
-from sqlalchemy import Session
+from sqlalchemy.orm import Session
 
 from app.db.database import SessionLocal
 

@@ -9,10 +9,10 @@ def create_short_url(
         url_data:URLCreate,
         db:Session
 )->URL:
+    url=URL(
+        original_url=str(url_data.url),
+        )
     try:
-        url=URL(
-            original_url=str(url_data.url),
-    )
         db.add(url)
         db.flush()
         url.short_code=encode_base62(url.id)

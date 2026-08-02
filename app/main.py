@@ -4,9 +4,9 @@ from fastapi import FastAPI
 
 from app.db.base import Base
 from app.db.database import engine
+from app.api.url import router as url_router
+
 import app.models
-
-
 @asynccontextmanager
 async def lifespan(app:FastAPI):
     Base.metadata.create_all(bind=engine)
@@ -23,8 +23,4 @@ app=FastAPI(
 def root():
     return {"message":"Hello World"}
 
-
-
-from app.core.config import settings
-
-print(settings.database_url)
+app.include_router(url_router)
