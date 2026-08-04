@@ -1,7 +1,10 @@
 from fastapi import APIRouter,Depends
 from sqlalchemy.orm import Session
 
-from app.services.url_service import create_short_url
+from fastapi.responses import Response
+from fastapi.exceptions import HTTPException
+
+from app.services.url_service import create_short_url,delete_url
 from app.utils.urls import build_short_url
 from app.schemas.url import URLCreate,URLResponse
 from app.db.session import get_db
@@ -19,3 +22,18 @@ def shorten_url(
 )->URLResponse:
     url=create_short_url(long_url,db)
     return URLResponse(short_url=build_short_url(url.short_code))
+
+
+@router.delete("/{short_code}")
+def remove_url(
+    short_code:str,
+    db:Session=Depends(get_db)
+):
+    url=delete_url(short_code,db)
+    if url:
+        return {"message":"Short link removed successfully"}
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail="short URL not found"
+        )

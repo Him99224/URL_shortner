@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select,delete
 
 from app.models.url import URL
 from app.schemas.url import URLCreate
@@ -35,6 +35,17 @@ def find_original_url(
     url=result.scalar_one_or_none()
     return url
 
+def delete_url(
+        short_code:str,
+        db: Session
+)->URL|None:
+    url=find_original_url(short_code,db)
+    if url is None:
+        return None
+    else:
+        db.delete(url)
+        db.commit()
+        return url
 
 
 #not adding the incrementor for click count here yet for future
