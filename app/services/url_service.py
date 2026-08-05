@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import select,delete
+from sqlalchemy import select
 
 from app.models.url import URL
 from app.schemas.url import URLCreate
