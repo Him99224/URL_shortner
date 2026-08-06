@@ -29,7 +29,7 @@ class URL(Base):
         default=datetime.utcnow
     )
 
-    exprires_at:Mapped[datetime| None]=mapped_column(
+    expires_at:Mapped[datetime| None]=mapped_column(
         DateTime,
         nullable=True
     )

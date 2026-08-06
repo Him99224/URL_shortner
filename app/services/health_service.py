@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-from fastapi import logger
+import logging
+
+logger=logging.getLogger(__name__)
 
 from app.schemas.health import HealthResponse,ServiceStatus
 
@@ -11,7 +13,7 @@ def health_check(
     try:
         db.execute(select(1))
         result["PostgreSQL"]=ServiceStatus(status="connected")
-    except Exception as e:
+    except Exception:
         logger.exception("PostgreSQL health check failed")
         result["PostgreSQL"]=ServiceStatus(status="disconnected")
     connected = 0

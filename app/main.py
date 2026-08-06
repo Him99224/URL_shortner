@@ -8,6 +8,7 @@ from app.api.url import router as url_router
 from app.api.redirect import router as redirect_router
 from app.api.health import router as health_router
 
+import app.core.logging
 import app.models
 @asynccontextmanager
 async def lifespan(app:FastAPI):

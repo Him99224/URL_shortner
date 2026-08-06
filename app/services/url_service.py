@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
@@ -5,6 +7,9 @@ from app.models.url import URL
 from app.schemas.url import URLCreate
 from app.utils.base62 import encode_base62
 
+import logging
+
+logger=logging.getLogger(__name__)
 
 def create_short_url(
         url_data:URLCreate,
@@ -19,9 +24,15 @@ def create_short_url(
         url.short_code=encode_base62(url.id)
         db.commit()
         db.refresh(url)
+        logger.info(
+        "Created short URL '%s' for '%s'",
+        url.short_code,
+        url.original_url
+        )
         return url
     except Exception:
         db.rollback()
+        logger.exception("Failed to create short URL")
         raise
 
 def find_original_url(
@@ -45,8 +56,21 @@ def delete_url(
     else:
         db.delete(url)
         db.commit()
+        logger.info(
+        "Deleted short URL '%s'",
+        url.short_code
+        )
         return url
 
+
+def is_expired(
+        url:URL
+)->bool:
+    current_time=datetime.now()
+    if url.expires_at is None:
+        return False
+    else:
+        return current_time>=url.expires_at
 
 #not adding the incrementor for click count here yet for future
 
