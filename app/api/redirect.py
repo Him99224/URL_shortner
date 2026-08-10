@@ -27,7 +27,8 @@ def redirect(
             status_code=410,
             detail="short URL Expired"
         )
-
+    url.click_count+=1
+    db.commit()
     return RedirectResponse(
         url=url.original_url,
         status_code=307
