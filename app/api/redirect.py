@@ -5,6 +5,7 @@ from fastapi.exceptions import HTTPException
 
 from app.services.url_service import find_original_url,is_expired
 from app.db.session import get_db
+from app.events.producer import publish_click_event
 
 router=APIRouter()
 
@@ -27,8 +28,8 @@ def redirect(
             status_code=410,
             detail="short URL Expired"
         )
-    url.click_count+=1
-    db.commit()
+    publish_click_event(short_code)
+    
     return RedirectResponse(
         url=url.original_url,
         status_code=307
