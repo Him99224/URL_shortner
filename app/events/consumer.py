@@ -4,15 +4,16 @@ from confluent_kafka import Consumer
 
 from app.db.database import SessionLocal
 from app.models import URL
+from app.core.config import settings
 
 
 consumer= Consumer({
-    "bootstrap.servers": "localhost:9092",
+    "bootstrap.servers": settings.KAFKA_BOOTSTRAP_SERVERS,
     "group.id": "url_analytics",
     "auto.offset.reset": "earliest"
 })
 
-consumer.subscribe(["url_clicks"])
+consumer.subscribe([settings.KAFKA_CLICK_TOPIC])
 
 def process_click_event(event: dict) -> None:
     db = SessionLocal()
