@@ -1,0 +1,6 @@
+services:
+  redis:
+    image: redis:latest
+    container_name: url_shortener_redis
+    ports:
+      - "6379:6379"

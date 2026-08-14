@@ -8,6 +8,9 @@ class Settings(BaseSettings):
     KAFKA_BOOTSTRAP_SERVERS:str
     KAFKA_CLICK_TOPIC:str
 
+    # Redis settings
+    REDIS_URL:str
+
     model_config=SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

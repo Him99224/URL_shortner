@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy.orm import Session
 from sqlalchemy import select
@@ -15,21 +15,31 @@ def create_short_url(
         url_data:URLCreate,
         db:Session
 )->URL:
+
+    expires_at=None
+    if url_data.expires_in is not None:
+        expires_at=datetime.now(timezone.utc)+timedelta(seconds=url_data.expires_in)
     url=URL(
         original_url=str(url_data.url),
+        expires_at=expires_at
         )
     try:
         db.add(url)
         db.flush()
+
         url.short_code=encode_base62(url.id)
+
         db.commit()
         db.refresh(url)
+
         logger.info(
         "Created short URL '%s' for '%s'",
         url.short_code,
         url.original_url
         )
+
         return url
+    
     except Exception:
         db.rollback()
         logger.exception("Failed to create short URL")
@@ -64,16 +74,11 @@ def delete_url(
 
 
 def is_expired(
-        url:URL
+        expires_at:datetime|None
 )->bool:
-    current_time=datetime.now()
-    if url.expires_at is None:
+    current_time=datetime.now(timezone.utc)
+    if expires_at is None:
         return False
     else:
-        return current_time>=url.expires_at
+        return current_time>=expires_at
 
-#not adding the incrementor for click count here yet for future
-
-# TODO(Kafka):
-# Emit a "url_clicked" event instead of updating click_count directly.
-# Click aggregation will be handled asynchronously by a Kafka consumer.
